@@ -49,16 +49,15 @@ main:
 		lw $t2 0($t2)
 
 		addu $t3 $t1 $s2
-		addu $t4 $t1 $s3
-
-		lw $t5 0($t3)
-		
+				
 		li $a0 3 # a, x
 		li $a1 11 # b, y 
 		move $a2 $t2
 		jal secret_formula_apply
 		sw $v0 0($t3)
 
+		addu $t4 $t1 $s3
+		lw $t5 0($t3)
 		li $a0 3 # a, x
 		li $a1 11 # b, y 
 		move $a2 $t5
@@ -154,19 +153,16 @@ secret_formula_apply:
 	li $t9 1 # let $t6 be a counter for the loop
 
 	loop: # branch to printout when $t3 < $t6 
-		blt $t6 $t9 loop_2
+		blt $t6 $t9 end_func
 		mult $t5 $a2
 		mflo $t5 # stores mult result
 		addi $t9 $t9 1 # counter++
 		j loop
 
-	loop_2: 
-		blt $t5 $t8 end_func
-		sub $t5 $t5 $t8 
-		j loop_2
-
 	end_func: 
-		move $v0 $t5
+		div $t5 $t8
+		mfhi $t7
+		move $v0 $t7
 		jr $ra
 
 secret_formula_remove:
@@ -180,19 +176,16 @@ secret_formula_remove:
 	li $t9 1 # let $t6 be a counter for the loop
 
 	loop_r: # branch to printout when $t3 < $t6 
-		blt $t6 $t9 loop_2_r
+		blt $t6 $t9 end_func_r
 		mult $t5 $a2
 		mflo $t5 # stores mult result
 		addi $t9 $t9 1 # counter++
 		j loop_r
 
-	loop_2_r: 
-		blt $t5 $t8 end_func_r
-		sub $t5 $t5 $t8 
-		j loop_2_r
-
 	end_func_r: 
-		move $v1 $t5
+		div $t5 $t8
+		mfhi $t7
+		move $v1 $t7
 		jr $ra
 
 exit:
